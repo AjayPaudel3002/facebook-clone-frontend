@@ -1,24 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import Login from "./components/Login/LoginForm";
+import Registration from "./components/Login/RegistrationForm";
+
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+} from "react-router-dom";
+import PublicRoute from "./PublicRoute";
+import AppRouter from "./AppRouter";
 
 function App() {
+  // const [loggedInUser, setLoggedInUser] = useState({});
+  const user = JSON.parse(localStorage.getItem("user")) || "";
+  // console.log(user);
+  const [authenticated, setAuthenticated] = useState(user || "");
+
+  // console.log(loggedInUser);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Router>
+        <Switch>
+          <PublicRoute
+            path="/"
+            exact
+            render={(props) => (
+              <Login {...props} authenticated={authenticated} />
+            )}
+          />
+          <PublicRoute
+            path="/register"
+            exact
+            render={(props) => (
+              <Registration {...props} authenticated={authenticated} />
+            )}
+          />
+          <Route
+            path={["/users/*", "/user/*"]}
+            render={(props) => {
+              return <AppRouter {...props} />;
+            }}
+          />
+        </Switch>
+      </Router>
+    </>
   );
 }
 
